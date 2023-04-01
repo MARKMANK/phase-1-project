@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded',() => {
     const StartBtn = document.querySelector('#start-button')
     const width = 10
 
+
     //The Tetrominoes
 
     const tetrominoL = [
@@ -38,12 +39,34 @@ document.addEventListener('DOMContentLoaded',() => {
     const tetrominoI = [
         [1, width+1, width*2+1, width*3+1],
         [width, width+1, width+2, width+3],
-        [1,width+1, width*2+1, width*3+1],
+        [1, width+1, width*2+1, width*3+1],
         [width, width+1, width+2, width+3],
     ];
 
-    const theTetrominoes = [tetrominoI,tetrominoL,tetrominoO,tetrominoT,tetrominoZ];
+    const tertominoReverseL = [
+        [0, 1, width+1, width*2+1],
+        [width, width+1, width+2, 2],
+        [1, width+1, width*2+1, width*2+2],
+        [width*2, width, width+1, width+2],
+    ];
+
+    const tertominoReverseZ = [
+        [width, width+1, width*2+1,width*2+2],
+        [1, width+1, width, width*2],
+        [width, width+1, width*2+1,width*2+2],
+        [1, width+1, width, width*2],
+    ];
+
+    const tertominoX = [
+        [1, width, width+1, width+2, width*2+1],
+        [1, width, width+1, width+2, width*2+1],
+        [1, width, width+1, width+2, width*2+1],
+        [1, width, width+1, width+2, width*2+1],
+    ];
+
+    const theTetrominoes = [tetrominoI,tetrominoL,tetrominoO,tetrominoT,tetrominoZ,tertominoReverseL,tertominoReverseZ,tertominoX];
     let currentPosition = 4;
+    random = Math.floor(Math.random() * theTetrominoes.length);
 
     //Randomly select a tetromino at its first rotation 
     let randomShape = Math.floor(Math.random()*theTetrominoes.length);
@@ -110,8 +133,7 @@ document.addEventListener('DOMContentLoaded',() => {
             timerValue = timerValue - 100;
             console.log(timerValue);
             //start a new tetromino falling
-            random = Math.floor(Math.random() * theTetrominoes.length);
-            currentShape = theTetrominoes[random][currentRotation];
+            currentShape = theTetrominoes[randomShape][currentRotation];
             currentPosition = 4;
             draw();
         }
@@ -131,22 +153,26 @@ document.addEventListener('DOMContentLoaded',() => {
     //move tetromino right unless blocked by another block or edge
     function moveRight(){
          undraw();
-          const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
-          if(!atRightEdge)currentPosition += 1;
-          if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
-              currentPosition -= 1;
-          }
-          draw();
+        const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
+        if(!atRightEdge)currentPosition += 1;
+        if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            currentPosition -= 1;
+        }
+        draw();
       }
 
     //rotate the tetromino
     function rotate(){
         undraw();
+        const atLeftEdge = currentShape.some(index => (currentPosition + index) % width === 0);
+        if(!atLeftEdge)currentPosition -= 1;
+        const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
+        if(!atRightEdge)currentPosition += 1;
         currentRotation ++;
         if(currentRotation === currentShape.length){
             currentRotation = 0;
         }
-        currentShape = theTetrominoes[randomShape][currentRotation]
+        currentShape = theTetrominoes[random][currentRotation]
         draw();
     }   
 
