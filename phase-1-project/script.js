@@ -133,15 +133,11 @@ document.addEventListener('DOMContentLoaded',() => {
         draw()
         freeze()
       }
-    }
     
     //freeze block
     function freezeBlock(){
         if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
             current.forEach(index => squares[currentPosition + index].classList.add('taken'))
-            //Increases the falling speed 
-            timerValue = timerValue - 100;
-            console.log(timerValue);
             //start a new tetromino falling
             random = nextRandom;
             nextRandom = Math.floor(Math.random() * theTetrominoes.length);
@@ -179,15 +175,12 @@ document.addEventListener('DOMContentLoaded',() => {
     //rotate the tetromino
     function rotate(){
         undraw();
-        const atLeftEdge = current.some(index => (currentPosition + index) % width === 0);
-        if(!atLeftEdge)currentPosition -= 1;
-        const atRightEdge = current.some(index => (currentPosition + index) % width === width-1);
-        if(!atRightEdge)currentPosition += 1;
         currentRotation ++;
         if(currentRotation === current.length){
             currentRotation = 0;
         }
         current = theTetrominoes[random][currentRotation]
+        checkRotatedPosition();
         draw();
     }   
 
@@ -212,9 +205,11 @@ document.addEventListener('DOMContentLoaded',() => {
     function displayShape(){
         displaySquares,forEach(square => {
             square.classList.remove('tetromino')
+            square.style.backgroundColor = ''
         })
         upNext[nextRandom].forEach(index => {
             displaySquares[displayIndex + index].classList.add('tertromino')
+            displaySquares[displayIndex + index].style.backgroundColor = colors[nextRandom]
         })
     }
 
@@ -233,7 +228,7 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //add score
     function addScore(){
-        for(let i=0;i > 199;i+=width){
+        for(let i=0; i > 199; i+=width){
             const row = [i,i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8,i+9]
 
             if(row.every(index => squares[index].classList.contains('taken'))){
@@ -242,6 +237,7 @@ document.addEventListener('DOMContentLoaded',() => {
                 row.forEach(index => {
                     squares[index].classList.remove('taken')
                     squares[index].classList.remove('tetromino')
+                    squares[index].style.backgroundColor = ''
             })
             const squareRemove = squares.splice(i,width)
             squares = squareRemove.concat(squares)
@@ -249,6 +245,7 @@ document.addEventListener('DOMContentLoaded',() => {
             }
         }
     }
+    
     //game over
     function gameOver(){
         if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))){
