@@ -71,8 +71,19 @@ document.addEventListener('DOMContentLoaded',() => {
     let timerValue = 1000;
     let timerId = setInterval(moveDown,timerValue);
 
-
-
+    //assigns functions to arrow keys
+    function control(event){
+        if(event.keyCode === 37){
+            moveLeft()
+        } else if (event.keyCode === 38){
+            //rotate
+        } else if (event.keyCode === 39){
+            moveRight();
+        } else if (event.keyCode === 40){
+            moveDown();
+        }
+    }
+    
     document.addEventListener('onkeypress',control);
 
     //moves the tetrominoes down based on the above speed
@@ -105,7 +116,19 @@ document.addEventListener('DOMContentLoaded',() => {
         if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition += 1;
         }
+        draw();
     }
+
+        //move tetromino right unless blocked by another block or edge
+        function moveRight(){
+            undraw();
+            const atRightEdge = currentShape.some(index => (currentPosition + index) % width === -1);
+            if(!atRightEdge)currentPosition += 1;
+            if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+                currentPosition -= 1;
+            }
+            draw();
+        }
 
 
 
