@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded',() => {
             moveLeft();
         } else if (event.keyCode === 38){
             console.log("rotate");
-            //rotate
+            rotate();
         } else if (event.keyCode === 39){
             console.log("right");
             moveRight();
@@ -92,10 +92,14 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //moves the tetrominoes down based on the above speed
     function moveDown(){
+        if(!currentShape.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
         undraw();
         currentPosition += width
         draw();
-        freezeBlock();
+        }else{
+         freezeBlock();
+        }
+  
     }
     
     //freeze block
@@ -103,7 +107,8 @@ document.addEventListener('DOMContentLoaded',() => {
         if(currentShape.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
             currentShape.forEach(index => squares[currentPosition + index].classList.add('taken'))
             //Increases the falling speed 
-            timerValue = timerValue - 10;
+            timerValue = timerValue - 100;
+            console.log(timerValue);
             //start a new tetromino falling
             random = Math.floor(Math.random() * theTetrominoes.length);
             currentShape = theTetrominoes[random][currentRotation];
@@ -123,17 +128,27 @@ document.addEventListener('DOMContentLoaded',() => {
         draw();
     }
 
-        //move tetromino right unless blocked by another block or edge
-        function moveRight(){
-            undraw();
-            const atRightEdge = currentShape.some(index => (currentPosition + index) % width === -1);
-            if(!atRightEdge)currentPosition += 1;
-            if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
-                currentPosition -= 1;
-            }
-            draw();
-        }
+    //move tetromino right unless blocked by another block or edge
+    function moveRight(){
+         undraw();
+          const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
+          if(!atRightEdge)currentPosition += 1;
+          if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+              currentPosition -= 1;
+          }
+          draw();
+      }
 
+    //rotate the tetromino
+    function rotate(){
+        undraw();
+        currentRotation ++;
+        if(currentRotation === currentShape.length){
+            currentRotation = 0;
+        }
+        currentShape = theTetrominoes[randomShape][currentRotation]
+        draw();
+    }   
 
 
 //DOM listener close
