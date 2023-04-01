@@ -6,6 +6,17 @@ document.addEventListener('DOMContentLoaded',() => {
     const width = 10
     let nextRandom = 0
     let timerId
+    let score = 0
+
+    const colors = [
+        'red',
+        'orange',
+        'yellow',
+        'green',
+        'blue',
+        'indigo',
+        'violet',
+    ];
 
 
     //The Tetrominoes
@@ -68,33 +79,33 @@ document.addEventListener('DOMContentLoaded',() => {
 
     const theTetrominoes = [tetrominoI,tetrominoL,tetrominoO,tetrominoT,tetrominoZ,tertominoReverseL,tertominoReverseZ,tertominoX];
     let currentPosition = 4;
- 
-
-    //Randomly select a tetromino at its first rotation 
-    let randomShape = Math.floor(Math.random()*theTetrominoes.length);
     let currentRotation = 0;
-    let currentShape = theTetrominoes[randomShape][currentRotation];
+
+    console.log(theTetrominoes[0][0])
+ 
+    //Randomly select a tetromino at its first rotation 
+    let random = Math.floor(Math.random()*theTetrominoes.length);
+    let current = theTetrominoes[random][currentRotation];
 
 
     //draw the tetromino
     function draw(){
-        currentShape.forEach(index => {
+        current.forEach(index => {
             squares[currentPosition + index].classList.add('tetromino');
+            squares[currentPosition + index].style.backgroundColor = colors[random];
         })
     }
 
-    draw();
-
     //undraw the tertomino
     function undraw(){
-        currentShape.forEach(index => {
+        current.forEach(index => {
             squares[currentPosition + index].classList.remove('tetromino')
+            squares[currentPosition + index].style.backgroundColor = ''
         })
     }
 
     //tetrominoes downward speed 1000 = 1 sec
     let timerValue = 1000;
-    //timerId = setInterval(moveDown,timerValue);
 
     //assigns functions to arrow keys
     function control(event){
@@ -115,42 +126,40 @@ document.addEventListener('DOMContentLoaded',() => {
     
     document.addEventListener('keydown',control);
 
-    //moves the tetrominoes down based on the above speed
-    function moveDown(){
-        if(!currentShape.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
-        undraw();
+    //moves the tetrominoes down
+    function moveDown() {
+        undraw()
         currentPosition += width
-        draw();
-        }else{
-         freezeBlock();
-        }
-  
+        draw()
+        freeze()
+      }
     }
     
     //freeze block
     function freezeBlock(){
-        if(currentShape.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
-            currentShape.forEach(index => squares[currentPosition + index].classList.add('taken'))
+        if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
+            current.forEach(index => squares[currentPosition + index].classList.add('taken'))
             //Increases the falling speed 
             timerValue = timerValue - 100;
             console.log(timerValue);
             //start a new tetromino falling
             random = nextRandom;
             nextRandom = Math.floor(Math.random() * theTetrominoes.length);
-            currentShape = theTetrominoes[randomShape][currentRotation];
+            current = theTetrominoes[random][currentRotation];
             currentPosition = 4;
             draw();
             displayShape();
             addScore();
+            gameOver();
         }
     }
 
     //move tetromino left unless blocked by another block or edge
     function moveLeft(){
         undraw();
-        const atLeftEdge = currentShape.some(index => (currentPosition + index) % width === 0);
+        const atLeftEdge = current.some(index => (currentPosition + index) % width === 0);
         if(!atLeftEdge)currentPosition -= 1;
-        if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition += 1;
         }
         draw();
@@ -159,9 +168,9 @@ document.addEventListener('DOMContentLoaded',() => {
     //move tetromino right unless blocked by another block or edge
     function moveRight(){
          undraw();
-        const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
+        const atRightEdge = current.some(index => (currentPosition + index) % width === width-1);
         if(!atRightEdge)currentPosition += 1;
-        if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition -= 1;
         }
         draw();
@@ -170,15 +179,15 @@ document.addEventListener('DOMContentLoaded',() => {
     //rotate the tetromino
     function rotate(){
         undraw();
-        const atLeftEdge = currentShape.some(index => (currentPosition + index) % width === 0);
+        const atLeftEdge = current.some(index => (currentPosition + index) % width === 0);
         if(!atLeftEdge)currentPosition -= 1;
-        const atRightEdge = currentShape.some(index => (currentPosition + index) % width === width-1);
+        const atRightEdge = current.some(index => (currentPosition + index) % width === width-1);
         if(!atRightEdge)currentPosition += 1;
         currentRotation ++;
-        if(currentRotation === currentShape.length){
+        if(currentRotation === current.length){
             currentRotation = 0;
         }
-        currentShape = theTetrominoes[random][currentRotation]
+        current = theTetrominoes[random][currentRotation]
         draw();
     }   
 
@@ -238,6 +247,13 @@ document.addEventListener('DOMContentLoaded',() => {
             squares = squareRemove.concat(squares)
             squares.forEach(cell => grid.appendChild(cell))
             }
+        }
+    }
+    //game over
+    function gameOver(){
+        if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))){
+            scoreDisplay.innerHTML = 'GAME OVER'
+            clearInterval(timerId)
         }
     }
 
