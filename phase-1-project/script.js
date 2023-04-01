@@ -74,17 +74,21 @@ document.addEventListener('DOMContentLoaded',() => {
     //assigns functions to arrow keys
     function control(event){
         if(event.keyCode === 37){
-            moveLeft()
+            console.log("left");
+            moveLeft();
         } else if (event.keyCode === 38){
+            console.log("rotate");
             //rotate
         } else if (event.keyCode === 39){
+            console.log("right");
             moveRight();
         } else if (event.keyCode === 40){
+            console.log("down");
             moveDown();
         }
     }
     
-    document.addEventListener('onkeypress',control);
+    document.addEventListener('keydown',control);
 
     //moves the tetrominoes down based on the above speed
     function moveDown(){
@@ -113,7 +117,7 @@ document.addEventListener('DOMContentLoaded',() => {
         undraw();
         const atLeftEdge = currentShape.some(index => (currentPosition + index) % width === 0);
         if(!atLeftEdge)currentPosition -= 1;
-        if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition += 1;
         }
         draw();
@@ -124,7 +128,7 @@ document.addEventListener('DOMContentLoaded',() => {
             undraw();
             const atRightEdge = currentShape.some(index => (currentPosition + index) % width === -1);
             if(!atRightEdge)currentPosition += 1;
-            if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            if(currentShape.some(index => squares[currentPosition + index].classList.contains('taken'))) {
                 currentPosition -= 1;
             }
             draw();
