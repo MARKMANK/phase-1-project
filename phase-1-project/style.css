@@ -11,10 +11,28 @@
     width: 20px;
   }
 
+  .grid-container{
+    display: flex;
+  }
+
   .tetromino{
     background-color: rgb(50, 50, 50);
   }
 
   .taken{
     background-color: rgb(198, 34, 34);
+  }
+
+  .mini-grid{
+    margin-left: 50px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgb(220, 230, 232);
+  }
+
+  .mini-grid div{
+    width: 20px;
+    height: 20px;
   }

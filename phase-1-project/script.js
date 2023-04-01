@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //tetrominoes downward speed 1000 = 1 sec
     let timerValue = 1000;
-    let timerId = setInterval(moveDown,timerValue);
+    timerId = setInterval(moveDown,timerValue);
 
     //assigns functions to arrow keys
     function control(event){
