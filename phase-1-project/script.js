@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded',() => {
     const grid = document.querySelector('.grid')
     let squares = Array.from(document.querySelectorAll('.grid div'))
-    const ScoreDisplay = document.querySelector('#score')
-    const StartBtn = document.querySelector('#start-button')
+    const scoreDisplay = document.querySelector('#score')
+    const startBtn = document.querySelector('#start-button')
     const width = 10
     let nextRandom = 0
+    let timerId
 
 
     //The Tetrominoes
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //tetrominoes downward speed 1000 = 1 sec
     let timerValue = 1000;
-    timerId = setInterval(moveDown,timerValue);
+    //timerId = setInterval(moveDown,timerValue);
 
     //assigns functions to arrow keys
     function control(event){
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded',() => {
             currentPosition = 4;
             draw();
             displayShape();
+            addScore();
         }
     }
 
@@ -207,6 +209,37 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
+    //start button functionality
+    startBtn.addEventListener('click',() => {
+        if(timerId){
+            clearInterval(timerId)
+            timerId = null;
+        } else {
+            draw();
+            timerId = setInterval(moveDown,timerValue)
+            nextRandom = Math.floor(Math.random() * theTetrominoes.length)
+            displayShape();
+        }
+    })
+
+    //add score
+    function addScore(){
+        for(let i=0;i > 199;i+=width){
+            const row = [i,i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8,i+9]
+
+            if(row.every(index => squares[index].classList.contains('taken'))){
+                score += 1;
+                scoreDisplay.innerHTML = score;
+                row.forEach(index => {
+                    squares[index].classList.remove('taken')
+                    squares[index].classList.remove('tetromino')
+            })
+            const squareRemove = squares.splice(i,width)
+            squares = squareRemove.concat(squares)
+            squares.forEach(cell => grid.appendChild(cell))
+            }
+        }
+    }
 
 //DOM listener close
 })
