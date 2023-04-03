@@ -18,11 +18,11 @@
   .tetromino{
     background-color: rgb(50, 50, 50);
   }
-
+/*
   .taken{
     background-color: rgb(198, 34, 34);
   }
-
+*/
   .mini-grid{
     margin-left: 50px;
     width: 80px;
