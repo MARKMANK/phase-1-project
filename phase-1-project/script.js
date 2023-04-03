@@ -80,8 +80,6 @@ document.addEventListener('DOMContentLoaded',() => {
     const theTetrominoes = [tetrominoI,tetrominoL,tetrominoO,tetrominoT,tetrominoZ,tertominoReverseL,tertominoReverseZ,tertominoX];
     let currentPosition = 4;
     let currentRotation = 0;
-
-    console.log(theTetrominoes[0][0])
  
     //Randomly select a tetromino at its first rotation 
     let random = Math.floor(Math.random()*theTetrominoes.length);
@@ -103,9 +101,6 @@ document.addEventListener('DOMContentLoaded',() => {
             squares[currentPosition + index].style.backgroundColor = ''
         })
     }
-
-    //tetrominoes downward speed 1000 = 1 sec
-    let timerValue = 1000;
 
     //assigns functions to arrow keys
     function control(event){
@@ -131,7 +126,7 @@ document.addEventListener('DOMContentLoaded',() => {
         undraw()
         currentPosition += width
         draw()
-        freeze()
+        freezeBlock()
       }
     
     //freeze block
@@ -143,6 +138,7 @@ document.addEventListener('DOMContentLoaded',() => {
             nextRandom = Math.floor(Math.random() * theTetrominoes.length);
             current = theTetrominoes[random][currentRotation];
             currentPosition = 4;
+            console.log(current);
             draw();
             displayShape();
             addScore();
@@ -203,7 +199,7 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //display shape on mini grid
     function displayShape(){
-        displaySquares,forEach(square => {
+        displaySquares.forEach(square => {
             square.classList.remove('tetromino')
             square.style.backgroundColor = ''
         })
@@ -214,13 +210,13 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 
     //start button functionality
-    startBtn.addEventListener('click',() => {
+    startBtn.addEventListener('click', () => {
         if(timerId){
             clearInterval(timerId)
             timerId = null;
         } else {
             draw();
-            timerId = setInterval(moveDown,timerValue)
+            timerId = setInterval(moveDown,1000)
             nextRandom = Math.floor(Math.random() * theTetrominoes.length)
             displayShape();
         }
@@ -245,7 +241,7 @@ document.addEventListener('DOMContentLoaded',() => {
             }
         }
     }
-    
+
     //game over
     function gameOver(){
         if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))){
