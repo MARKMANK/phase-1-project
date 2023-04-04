@@ -11,11 +11,9 @@ document.addEventListener('DOMContentLoaded',() => {
     const colors = [
         'red',
         'orange',
-        'yellow',
         'green',
         'blue',
-        'indigo',
-        'violet',
+        'purple',
     ];
 
 
@@ -170,7 +168,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
         draw();
       }
-    ///FIX ROTATION OF TETROMINOS A THE EDGE 
+    //fix tetromino rotation at the edge 
     function isAtRight() {
         return current.some(index=> (currentPosition + index + 1) % width === 0)  
     }
@@ -198,7 +196,7 @@ document.addEventListener('DOMContentLoaded',() => {
     //rotate the tetromino
     function rotate(){
         undraw();
-        currentRotation ++;
+        currentRotation ++
         if(currentRotation === current.length){
             currentRotation = 0;
         }
@@ -208,9 +206,9 @@ document.addEventListener('DOMContentLoaded',() => {
     }   
 
     //show up-next tetromino
-    const displaySquares =document.querySelectorAll('.mini-grid div');
+    const displaySquares = document.querySelectorAll('.mini-grid div');
     const displayWidth = 4;
-    let displayIndex = 0;
+    const displayIndex = 0;
 
     //the tetromino without rotation
     const upNext = [
@@ -252,7 +250,7 @@ document.addEventListener('DOMContentLoaded',() => {
     //add score
     function addScore(){
         for(let i=0; i > 199; i+=width){
-            const row = [i,i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8,i+9]
+            const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
 
             if(row.every(index => squares[index].classList.contains('taken'))){
                 score += 1;
@@ -271,8 +269,8 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //game over
     function gameOver(){
-        if(currentPosition.some(index => squares[currentPosition + index].classList.contains('taken'))){
-            scoreDisplay.innerHTML = 'GAME OVER'
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))){
+            scoreDisplay.innerHTML = ' GAME OVER'
             clearInterval(timerId)
         }
     }
