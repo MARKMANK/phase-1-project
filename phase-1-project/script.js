@@ -1,19 +1,51 @@
 document.addEventListener('DOMContentLoaded',() => {
+
+    //Get Request
+    const highScoreTable = document.getElementById('player-scores');
+
+    const configurationObject = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        Accept: "application/json"
+        },
+      }
+  
+      fetch("http://localhost:3000/scores",configurationObject)
+        .then (function(response){
+            return response.json();
+        })
+        .then (function(resObj){
+            resObj.forEach((player) => {
+                highScoreTable.innerHTML = highScoreTable.innerHTML +
+                `
+                <p>
+                <h5>${player.name}&nbsp&nbsp${player.score}&nbsp&nbsp${player.time}</h5>
+                </p>
+                `
+            })
+        })
+
     const grid = document.querySelector('.grid')
+    const title = document.getElementById('title-tetris')
     let squares = Array.from(document.querySelectorAll('.grid div'))
     const scoreDisplay = document.querySelector('#score')
     const startBtn = document.querySelector('#start-button')
     const width = 10
+    let blockSpeed = 1000
     let nextRandom = 0
     let timerId
     let score = 0
+    let timeStart = ''
+    let timeEnd = ''
 
     const colors = [
         'orange',
         'red',
         'purple',
         'green',
-        'blue'
+        'blue',
+        'yellow',
       ]
 
 
@@ -237,24 +269,32 @@ document.addEventListener('DOMContentLoaded',() => {
 
     //start button functionality
     startBtn.addEventListener('click', () => {
+        document.getElementById("start-button").innerHTML = "Start Game"
         if(timerId){
             clearInterval(timerId)
             timerId = null;
         } else {
+            document.getElementById("start-button").innerHTML = "PAUSE"
             draw();
-            timerId = setInterval(moveDown,1000)
+            timerId = setInterval(moveDown,blockSpeed)
             nextRandom = Math.floor(Math.random() * theTetrominoes.length)
             displayShape();
+            const today = new Date();
+            timeStart = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            console.log(timeStart)
         }
     })
+    
 
     //add score
-  function addScore() {
+    function addScore() {
     for (let i = 0; i < 199; i +=width) {
       const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
 
       if(row.every(index => squares[index].classList.contains('taken'))) {
         score +=1
+        blockSpeed -= 50
+        console.log(blockSpeed)
         scoreDisplay.innerHTML = score
         row.forEach(index => {
           squares[index].classList.remove('taken')
@@ -265,16 +305,69 @@ document.addEventListener('DOMContentLoaded',() => {
         squares = squaresRemoved.concat(squares)
         squares.forEach(cell => grid.appendChild(cell))
       }
-    }
-  }
+    }}
+
+ 
 
     //game over
     function gameOver(){
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))){
-            scoreDisplay.innerHTML = ' GAME OVER'
+            title.innerHTML = ' GAME OVER'
+            document.getElementById('submit-div').style.display = "block";  //shows submit score when game over
+            const occupiedBlock = document.getElementsByClassName("taken");
+            for(let i = 0; i < occupiedBlock.length; i++){
+                occupiedBlock[i].style.backgroundColor = 'rgb(28,28,28,50%)'
+            }
             clearInterval(timerId)
+            undraw()
+            const today = new Date();
+            timeEnd = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            console.log(timeEnd)
         }
     }
+
+   //submit score
+
+   let playerNameInput = '';
+   const playerNameInputElement = document.getElementById("name-box")
+     playerNameInputElement.defaultValue = "AAA"
+   playerNameInputElement.addEventListener("input", function(event){
+     playerNameInput = event.target.value;
+   })
+ 
+     const form = document.getElementById("submit-form");
+     form.addEventListener("submit", (event) => {
+         event.preventDefault();
+         console.log("You sumbitted your score!")
+ 
+         const configurationObject = {
+             method: "POST",
+             header: {
+                 "Content-Type": "application/json",
+                 Accept: "application/json"
+                 },
+                 body: JSON.stringify({
+                     "name": playerNameInput,
+                     "score": score,
+                     "time": (timeEnd-timeStart),
+                 })
+         }
+         fetch("http://localhost:3000/scores",configurationObject)
+         .then (function(response){
+           return response.json();
+         })
+         .then (function(resObj){
+            resObj.forEach((player) => {
+                highScoreTable.innerHTML = highScoreTable.innerHTML +
+                `
+                <p>
+                <h5>${player.name}&nbsp&nbsp${player.score}&nbsp&nbsp${player.time}</h5>
+                </p>
+                `
+            })
+        })
+     })
+
 
 //DOM listener close
 })
