@@ -13,6 +13,7 @@
 
   <h3 id="title-tetris" class="font-ibm">A BEGINNER'S TETRIS</h3>
   <button class="font-ibm" class="btn"  id="start-button">Start Game</button>
+  <button class="font-ibm" class="btn"  id="restart-button">New Game</button>
 
   <div class="grid-container">
     <div class="grid">
@@ -248,24 +249,29 @@
       <div></div>
 
         <form id="submit-form">
+
           <h4 class="font-ibm" class="score-box" >Score: <span id="score">0</span></h4>
-          <div></div>
+          <br></br>
+          <div id="submit-div" style="display: none;">
+
+            <input 
+              class="font-ibm"
+              id="name-box"
+              type="text"
+              name="name"
+              value="AAA"
+              placeholder= "AAA"
+              maxlength="3"
+              />
+
+            <button id="submit-btn" class="font-ibm" type="submit">Sumbit Score</button>
+          </div>
+          <br></br>
           <h5 class="font-ibm" class="score-box" id="player-scores">High Scores</h5>
             <div>
               <!-- Player info here -->
             </div>
-              <div id="submit-div" style="display: none;">
-
-                <input 
-                  class="font-ibm"
-                  id="name-box"
-                  type="text"
-                  name="name"
-                  placeholder= "AAA"
-                  maxlength="3"
-                  />
-                <button id="submit-btn" class="font-ibm" type="submit">Sumbit Score</button>
-              </div>
+              
         </form>
 
     </div> 

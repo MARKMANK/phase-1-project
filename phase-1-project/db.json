@@ -1,14 +1,28 @@
 {
-    "scores": [
-      {
-        "name": "KEV",
-        "score": "27",
-        "time": "00:10:27"
-      },
-      {
-        "name": "ALI",
-        "score": "14",
-        "time": "00:03:45"
-      }
-    ]
-  }
+  "scores": [
+    {
+      "id": 1,
+      "name": "KEV",
+      "score": "27",
+      "time": "00:10:27"
+    },
+    {
+      "id": 2,
+      "name": "ALI",
+      "score": "14",
+      "time": "00:03:45"
+    },
+    {
+      "name": "KEV",
+      "score": "01",
+      "time": "00:00:24",
+      "id": 3
+    },
+    {
+      "name": "KEV",
+      "score": 14,
+      "time": "00:03:35",
+      "id": 4
+    }
+  ]
+}

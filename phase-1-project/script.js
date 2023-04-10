@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded',() => {
 
     //Get Request
@@ -31,21 +32,29 @@ document.addEventListener('DOMContentLoaded',() => {
     let squares = Array.from(document.querySelectorAll('.grid div'))
     const scoreDisplay = document.querySelector('#score')
     const startBtn = document.querySelector('#start-button')
+    const restartBtn = document.querySelector('#restart-button')
     const width = 10
     let blockSpeed = 1000
     let nextRandom = 0
     let timerId
     let score = 0
-    let timeStart = ''
-    let timeEnd = ''
+
+    let totalTimeResult = ''
+    let timeStartInSeconds = ''
+    let timeEndInSeconds = ''
+
+
 
     const colors = [
-        'orange',
-        'red',
-        'purple',
-        'green',
-        'blue',
-        'yellow',
+        'rgb(216, 22, 22)', //red
+        'rgb(255, 166, 0)', //orange
+        'rgb(245, 245, 38)', //yellow
+        'rgb(85, 219, 13)', //lime
+        'rgb(20, 156, 25)', //green
+        'rgb(30, 230, 216)', //cyan
+        'rgb(28, 161, 237)', //blue
+        'rgb(166, 83, 244)', //purple (pink in CSS tetromino class)
+
       ]
 
 
@@ -133,6 +142,27 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
+    //set start time
+    function startTime(){
+    const one = new Date();
+    timeStartInSeconds = (one.getHours()*3600)+(one.getMinutes()*60)+(one.getSeconds())
+    console.log(timeStartInSeconds)
+    }
+
+    //set end time
+    function endTime(){
+    const two = new Date();
+    timeEndInSeconds = (two.getHours()*3600)+(two.getMinutes()*60)+(two.getSeconds())
+    console.log(timeEndInSeconds)
+    let totalTime = timeEndInSeconds-timeStartInSeconds
+
+    const date = new Date(null);
+    date.setSeconds(totalTime);
+    const result = date.toISOString().slice(11, 19);
+    console.log(result)
+    totalTimeResult = result;
+    }
+
     //assigns functions to arrow keys
     function control(event){
         if(event.keyCode === 37){
@@ -201,6 +231,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
         draw();
       }
+
     //fix tetromino rotation at the edge 
     function isAtRight() {
         return current.some(index=> (currentPosition + index + 1) % width === 0)  
@@ -278,11 +309,15 @@ document.addEventListener('DOMContentLoaded',() => {
             draw();
             timerId = setInterval(moveDown,blockSpeed)
             nextRandom = Math.floor(Math.random() * theTetrominoes.length)
-            displayShape();
-            const today = new Date();
-            timeStart = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            console.log(timeStart)
+            displayShape()
+            startTime()
         }
+    })
+
+    //restart button functionality 
+    restartBtn.addEventListener("click", (event) => {
+        console.log("NEW GAME!")
+        document.location.reload();
     })
     
 
@@ -320,51 +355,57 @@ document.addEventListener('DOMContentLoaded',() => {
             }
             clearInterval(timerId)
             undraw()
-            const today = new Date();
-            timeEnd = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            console.log(timeEnd)
+            endTime()
+        }
+    }
+
+    //check score and add 0 single single digit score
+    function addZeroToScore(){
+        if(score<10){
+            return score = `0${score}`
+        } else {
+            return score
         }
     }
 
    //submit score
 
-   let playerNameInput = '';
+   let playerNameInput = 'AAA';
    const playerNameInputElement = document.getElementById("name-box")
-     playerNameInputElement.defaultValue = "AAA"
    playerNameInputElement.addEventListener("input", function(event){
-     playerNameInput = event.target.value;
+     playerNameInput = (event.target.value).toUpperCase();
    })
- 
+
      const form = document.getElementById("submit-form");
      form.addEventListener("submit", (event) => {
          event.preventDefault();
          console.log("You sumbitted your score!")
- 
+         document.getElementById('submit-div').style.display = "none";
+        let bodyObj =  JSON.stringify({
+            "name": playerNameInput,
+            "score": addZeroToScore(score),
+            "time": totalTimeResult
+        })
+        console.log(bodyObj)
          const configurationObject = {
-             method: "POST",
-             header: {
-                 "Content-Type": "application/json",
-                 Accept: "application/json"
-                 },
-                 body: JSON.stringify({
-                     "name": playerNameInput,
-                     "score": score,
-                     "time": (timeEnd-timeStart),
-                 })
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            Accept: "application/json"},
+            body: bodyObj
          }
          fetch("http://localhost:3000/scores",configurationObject)
          .then (function(response){
            return response.json();
          })
          .then (function(resObj){
-            resObj.forEach((player) => {
+          console.log(resObj)
                 highScoreTable.innerHTML = highScoreTable.innerHTML +
                 `
                 <p>
-                <h5>${player.name}&nbsp&nbsp${player.score}&nbsp&nbsp${player.time}</h5>
+                <h5>${resObj.name}&nbsp&nbsp${resObj.score}&nbsp&nbsp${resObj.time}</h5>
                 </p>
                 `
-            })
         })
      })
 
