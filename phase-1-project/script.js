@@ -1,7 +1,6 @@
 
 document.addEventListener('DOMContentLoaded',() => {
 
-    //Get Request
     const highScoreTable = document.getElementById('player-scores');
 
     const configurationObject = {
@@ -46,19 +45,15 @@ document.addEventListener('DOMContentLoaded',() => {
 
 
     const colors = [
-        'rgb(216, 22, 22)', //red
-        'rgb(255, 166, 0)', //orange
-        'rgb(245, 245, 38)', //yellow
-        'rgb(85, 219, 13)', //lime
-        'rgb(20, 156, 25)', //green
-        'rgb(30, 230, 216)', //cyan
-        'rgb(28, 161, 237)', //blue
-        'rgb(166, 83, 244)', //purple (pink in CSS tetromino class)
-
+        'rgb(216, 22, 22)',
+        'rgb(255, 166, 0)',
+        'rgb(245, 245, 38)',
+        'rgb(85, 219, 13)',
+        'rgb(20, 156, 25)',
+        'rgb(30, 230, 216)',
+        'rgb(28, 161, 237)',
+        'rgb(166, 83, 244)',
       ]
-
-
-    //The Tetrominoes
 
     const tetrominoL = [
         [1, width+1, width*2+1, 2],
@@ -121,12 +116,12 @@ document.addEventListener('DOMContentLoaded',() => {
     let currentPosition = 4;
     let currentRotation = 0;
  
-    //Randomly select a tetromino at its first rotation 
+
     let random = Math.floor(Math.random()*theTetrominoes.length);
     let current = theTetrominoes[random][currentRotation];
 
 
-    //draw the tetromino
+
     function draw(){
         current.forEach(index => {
             squares[currentPosition + index].classList.add('tetromino');
@@ -134,7 +129,7 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
-    //undraw the tertomino
+
     function undraw(){
         current.forEach(index => {
             squares[currentPosition + index].classList.remove('tetromino')
@@ -142,14 +137,14 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
-    //set start time
+
     function startTime(){
     const one = new Date();
     timeStartInSeconds = (one.getHours()*3600)+(one.getMinutes()*60)+(one.getSeconds())
     console.log(timeStartInSeconds)
     }
 
-    //set end time
+
     function endTime(){
     const two = new Date();
     timeEndInSeconds = (two.getHours()*3600)+(two.getMinutes()*60)+(two.getSeconds())
@@ -163,7 +158,7 @@ document.addEventListener('DOMContentLoaded',() => {
     totalTimeResult = result;
     }
 
-    //assigns functions to arrow keys
+
     function control(event){
         if(event.keyCode === 37){
             console.log("left");
@@ -182,7 +177,6 @@ document.addEventListener('DOMContentLoaded',() => {
     
     document.addEventListener('keydown',control);
 
-    //moves the tetrominoes down
     function moveDown() {
         if(!current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
         undraw()
@@ -193,11 +187,11 @@ document.addEventListener('DOMContentLoaded',() => {
       }
     }
 
-    //freeze block
+
     function freezeBlock(){
         if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
             current.forEach(index => squares[currentPosition + index].classList.add('taken'))
-            //start a new tetromino falling
+
             random = nextRandom;
             nextRandom = Math.floor(Math.random() * theTetrominoes.length);
             current = theTetrominoes[random][currentRotation];
@@ -210,7 +204,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
     }
 
-    //move tetromino left unless blocked by another block or edge
+
     function moveLeft(){
         undraw();
         const atLeftEdge = current.some(index => (currentPosition + index) % width === 0);
@@ -221,7 +215,7 @@ document.addEventListener('DOMContentLoaded',() => {
         draw();
     }
 
-    //move tetromino right unless blocked by another block or edge
+
     function moveRight(){
          undraw();
         const atRightEdge = current.some(index => (currentPosition + index) % width === width-1);
@@ -232,7 +226,7 @@ document.addEventListener('DOMContentLoaded',() => {
         draw();
       }
 
-    //fix tetromino rotation at the edge 
+
     function isAtRight() {
         return current.some(index=> (currentPosition + index + 1) % width === 0)  
     }
@@ -242,11 +236,11 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 
     function checkRotatedPosition(P){
-        P = P || currentPosition       //get current position.  Then, check if the piece is near the left side.
-        if ((P+1) % width < 4) {         //add 1 because the position index can be 1 less than where the piece is (with how they are indexed).     
-          if (isAtRight()){            //use actual position to check if it's flipped over to right side
-            currentPosition += 1    //if so, add one to wrap it back around
-            checkRotatedPosition(P) //check again.  Pass position from start, since long block might need to move more.
+        P = P || currentPosition      
+        if ((P+1) % width < 4) {       
+          if (isAtRight()){          
+            currentPosition += 1   
+            checkRotatedPosition(P) 
             }
         }
         else if (P % width > 5) {
@@ -257,7 +251,6 @@ document.addEventListener('DOMContentLoaded',() => {
         }
       }
 
-    //rotate the tetromino
     function rotate(){
         undraw();
         currentRotation ++
@@ -269,24 +262,25 @@ document.addEventListener('DOMContentLoaded',() => {
         draw();
     }   
 
-    //show up-next tetromino
+
+
     const displaySquares = document.querySelectorAll('.mini-grid div');
     const displayWidth = 4;
     const displayIndex = 0;
 
-    //the tetromino without rotation
+
     const upNext = [
-        [0, 1, displayWidth+1, displayWidth*2+1], //tertominoReverseL
-        [displayWidth, displayWidth+1, displayWidth*2+1,displayWidth*2+2],  //tertominoReverseZ
-        [1, displayWidth, displayWidth+1, displayWidth+2, displayWidth*2+1], //tertominoX
-        [1, displayWidth+1, displayWidth*2+1, displayWidth*3+1],  //tetrominoI
-        [1,displayWidth+1, displayWidth*2+1,2], //tetrominoL
-        [0, 1, displayWidth, displayWidth+1], // tetrominoO
-        [1, displayWidth, displayWidth+1, displayWidth+2], // tetrominoT
-        [0, displayWidth, displayWidth+1, displayWidth*2+1], // tetrominoZ
+        [0, 1, displayWidth+1, displayWidth*2+1], 
+        [displayWidth, displayWidth+1, displayWidth*2+1,displayWidth*2+2], 
+        [1, displayWidth, displayWidth+1, displayWidth+2, displayWidth*2+1], 
+        [1, displayWidth+1, displayWidth*2+1, displayWidth*3+1], 
+        [1,displayWidth+1, displayWidth*2+1,2], 
+        [0, 1, displayWidth, displayWidth+1], 
+        [1, displayWidth, displayWidth+1, displayWidth+2],
+        [0, displayWidth, displayWidth+1, displayWidth*2+1], 
     ]
 
-    //display shape on mini grid
+
     function displayShape(){
         displaySquares.forEach(square => {
             square.classList.remove('tetromino')
@@ -298,7 +292,7 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
-    //start button functionality
+
     startBtn.addEventListener('click', () => {
         document.getElementById("start-button").innerHTML = "Start Game"
         if(timerId){
@@ -314,14 +308,14 @@ document.addEventListener('DOMContentLoaded',() => {
         }
     })
 
-    //restart button functionality 
+
     restartBtn.addEventListener("click", (event) => {
         console.log("NEW GAME!")
         document.location.reload();
     })
     
 
-    //add score
+
     function addScore() {
     for (let i = 0; i < 199; i +=width) {
       const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
@@ -344,11 +338,11 @@ document.addEventListener('DOMContentLoaded',() => {
 
  
 
-    //game over
+
     function gameOver(){
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))){
             title.innerHTML = ' GAME OVER'
-            document.getElementById('submit-div').style.display = "block";  //shows submit score when game over
+            document.getElementById('submit-div').style.display = "block"; 
             const occupiedBlock = document.getElementsByClassName("taken");
             for(let i = 0; i < occupiedBlock.length; i++){
                 occupiedBlock[i].style.backgroundColor = 'rgb(28,28,28,50%)'
@@ -359,7 +353,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
     }
 
-    //check score and add 0 single single digit score
+
     function addZeroToScore(){
         if(score<10){
             return score = `0${score}`
@@ -368,7 +362,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
     }
 
-   //submit score
+
 
    let playerNameInput = 'AAA';
    const playerNameInputElement = document.getElementById("name-box")
@@ -410,5 +404,5 @@ document.addEventListener('DOMContentLoaded',() => {
      })
 
 
-//DOM listener close
+
 })
